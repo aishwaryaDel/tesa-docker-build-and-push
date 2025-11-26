@@ -19,6 +19,8 @@ on:
     secrets:
       azure_creds:
         required: true
+      docker_env:
+        required: true
 
 jobs:
 
