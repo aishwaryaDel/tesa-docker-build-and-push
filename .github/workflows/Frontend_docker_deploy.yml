@@ -96,7 +96,7 @@ jobs:
         if: success()
         run: |
           SECRET_NAME="latest-version-$UI_APP_SERVICE_NAME"
-          az keyvault secret set --vault-name $KEY_VAULT_NAME --name "$SECRET_NAME" --value "v${{ needs.build-image.outputs.next_version }}"
+          az keyvault secret set --vault-name $KEY_VAULT_NAME --name "$SECRET_NAME" --value "${{ needs.build-image.outputs.next_version }}"
 
   # ---------------------- Update Web App ----------------------
   update-webapp:
