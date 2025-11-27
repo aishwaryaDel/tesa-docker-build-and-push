@@ -146,9 +146,3 @@ jobs:
             --name $UI_CONTAINER_APP_NAME \
             --resource-group $APP_RESOURCE_GROUP \
             --image $ACR_NAME.azurecr.io/${{ inputs.image_name }}:v${{ needs.push-image.outputs.next_version }}
-
-      - name: Restart Container App
-        run: |
-          az containerapp restart \
-            --name $UI_CONTAINER_APP_NAME \
-            --resource-group $APP_RESOURCE_GROUP
