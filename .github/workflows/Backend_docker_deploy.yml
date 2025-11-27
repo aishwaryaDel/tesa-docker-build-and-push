@@ -119,13 +119,15 @@ jobs:
         with:
           creds: ${{ secrets.azure_creds }}
 
-      - name: Update Web App Container Image
+      - name: Set Web App Container Registry Credentials
         run: |
           az webapp config container set \
             --name $API_APP_SERVICE_NAME \
             --resource-group $APP_RESOURCE_GROUP \
             --docker-custom-image-name $ACR_NAME.azurecr.io/${{ inputs.image_name }}:v${{ needs.push-image.outputs.next_version }} \
-            --docker-registry-server-url https://$ACR_NAME.azurecr.io
+            --docker-registry-server-url https://$ACR_NAME.azurecr.io \
+            --docker-registry-server-user $(az acr credential show -n $ACR_NAME --query username -o tsv) \
+            --docker-registry-server-password $(az acr credential show -n $ACR_NAME --query passwords[0].value -o tsv)
 
       - name: Restart Web App
         run: |
@@ -146,6 +148,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.azure_creds }}
+
+      - name: Set Container App Registry Credentials
+        run: |
+          az containerapp registry set-credentials \
+            --name $API_CONTAINER_APP_NAME \
+            --resource-group $APP_RESOURCE_GROUP \
+            --server $ACR_NAME.azurecr.io \
+            --username $(az acr credential show -n $ACR_NAME --query username -o tsv) \
+            --password $(az acr credential show -n $ACR_NAME --query passwords[0].value -o tsv)
 
       - name: Update Container App Image
         run: |
